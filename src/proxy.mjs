@@ -15,26 +15,34 @@ import {
 
 let proxies = null
 
+// 对象的内置方法拦截
 const objectTraps = {
+    // 看函数的定义
     get,
     has(target, prop) {
+        // 看属性有没有在修改后的副本中，未修改则是 baseState
         return prop in source(target)
     },
+    // 调用副本的 ownKeys
     ownKeys(target) {
         return Reflect.ownKeys(source(target))
     },
+    // 看函数的定义
     set,
     deleteProperty,
     getOwnPropertyDescriptor,
     defineProperty,
+    // 不支持设置原型，纯函数
     setPrototypeOf() {
         throw new Error("Immer does not support `setPrototypeOf()`.")
     }
 }
 
+// 数组的内置方法拦截
 const arrayTraps = {}
 each(objectTraps, (key, fn) => {
     arrayTraps[key] = function() {
+        // 传进来第一个东西是个数组？
         arguments[0] = arguments[0][0]
         return fn.apply(this, arguments)
     }
@@ -56,6 +64,7 @@ function createState(parent, base) {
     }
 }
 
+// 更改之后返回副本
 function source(state) {
     return state.modified === true ? state.copy : state.base
 }
@@ -128,12 +137,15 @@ function createProxy(parentState, base) {
     // 理论上走到这里 base 不是被代理过的，不过如果被代理了，就是 bug
     if (isProxy(base)) throw new Error("Immer bug. Plz report.")
 
-
+    // 创建原始 state
     const state = createState(parentState, base)
+    // 给 state 添加代理
     const proxy = Array.isArray(base)
         ? Proxy.revocable([state], arrayTraps)
         : Proxy.revocable(state, objectTraps)
+    // 
     proxies.push(proxy)
+    // 返回代理
     return proxy.proxy
 }
 
@@ -153,8 +165,10 @@ export function produceProxy(baseState, producer) {
     proxies = []
     try {
         // create proxy for root
+        // 创建代理
         const rootProxy = createProxy(undefined, baseState)
         // execute the thunk
+        // 执行 producer，this 和 参数都是代理
         const returnValue = producer.call(rootProxy, rootProxy)
         // and finalize the modified proxy
         let result
