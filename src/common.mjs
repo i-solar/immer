@@ -1,5 +1,7 @@
+// 代理的对象会被加入这样一个属性
 export const PROXY_STATE =
     typeof Symbol !== "undefined"
+        // 用 Symbol 的原因是这个属性永远不会被覆盖，唯一的
         ? Symbol("immer-proxy-state")
         : "__$immer_state"
 

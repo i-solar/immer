@@ -10,7 +10,7 @@ import {
     RETURNED_AND_MODIFIED_ERROR,
     each,
     finalize
-} from "./common"
+} from "./common.mjs"
 
 const descriptors = {}
 let states = null

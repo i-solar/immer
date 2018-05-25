@@ -11,7 +11,7 @@ import {
     shallowCopy,
     RETURNED_AND_MODIFIED_ERROR,
     each
-} from "./common"
+} from "./common.mjs"
 
 let proxies = null
 
@@ -40,6 +40,11 @@ each(objectTraps, (key, fn) => {
     }
 })
 
+/**
+ * 创建一个 state
+ * @param parent 
+ * @param base 
+ */
 function createState(parent, base) {
     return {
         modified: false,
@@ -120,7 +125,10 @@ function markChanged(state) {
 
 // creates a proxy for plain objects / arrays
 function createProxy(parentState, base) {
+    // 理论上走到这里 base 不是被代理过的，不过如果被代理了，就是 bug
     if (isProxy(base)) throw new Error("Immer bug. Plz report.")
+
+
     const state = createState(parentState, base)
     const proxy = Array.isArray(base)
         ? Proxy.revocable([state], arrayTraps)
@@ -129,12 +137,18 @@ function createProxy(parentState, base) {
     return proxy.proxy
 }
 
+// 正文，主要逻辑
 export function produceProxy(baseState, producer) {
+    // 是否被代理过
     if (isProxy(baseState)) {
         // See #100, don't nest producers
+        // 直接执行 producer
         const returnValue = producer.call(baseState, baseState)
+        // 无任何更改就直接返回 baseState
         return returnValue === undefined ? baseState : returnValue
     }
+
+    // 正文
     const previousProxies = proxies
     proxies = []
     try {
