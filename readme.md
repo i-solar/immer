@@ -6,6 +6,8 @@
 
 ## 学习笔记
 
+[预备知识](./study/预备知识.md)
+
 ## 参考文章
 
 [下一代状态管理工具 immer 简介及源码解析](https://zhuanlan.zhihu.com/p/33507866)
