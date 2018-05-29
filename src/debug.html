@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>试用 immer.js</title>
+</head>
+<body>
+    <script type="module">
+        import process from './immer.js'
+
+        const baseState = {
+            string: 'string',
+            number: 0,
+            object: {
+                array: [0, 1, 2],
+                regExp: /name/
+            }
+        }
+        const nextState = process(baseState, (draft) => {
+            draft.object.array.push(3)
+        })
+
+        console.log(nextState)
+    </script>
+</body>
+</html>

@@ -136,9 +136,11 @@ export function verifyReturnValue(returnedValue, proxy, isProxyModified) {
     }
 }
 
+// 判断 x === y 的
 export function is(x, y) {
     // From: https://github.com/facebook/fbjs/blob/c69904a511b900266935168223063dd8772dfc40/packages/fbjs/src/core/shallowEqual.js
     if (x === y) {
+        // 后者可判断 0 !== -0
         return x !== 0 || 1 / x === 1 / y
     } else {
         return x !== x && y !== y

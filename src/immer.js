@@ -1,8 +1,8 @@
-export {setAutoFreeze, setUseProxies} from "./common.mjs"
+export {setAutoFreeze, setUseProxies} from "./common.js"
 
-import {isProxyable, getUseProxies} from "./common.mjs"
-import {produceProxy} from "./proxy.mjs"
-import {produceEs5} from "./es5.mjs"
+import {isProxyable, getUseProxies} from "./common.js"
+import {produceProxy} from "./proxy.js"
+import {produceEs5} from "./es5.js"
 
 /**
  * produce takes a state, and runs a function against it.

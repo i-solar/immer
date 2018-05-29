@@ -11,7 +11,7 @@ import {
     shallowCopy,
     RETURNED_AND_MODIFIED_ERROR,
     each
-} from "./common.mjs"
+} from "./common.js"
 
 let proxies = null
 
@@ -69,6 +69,7 @@ function source(state) {
     return state.modified === true ? state.copy : state.base
 }
 
+// 获取代理的 prop
 function get(state, prop) {
     if (prop === PROXY_STATE) return state
     if (state.modified) {
@@ -79,21 +80,36 @@ function get(state, prop) {
             return (state.copy[prop] = createProxy(state, value))
         return value
     } else {
+        // ____未被修改过 ？
+        // 如果 proxies 有 prop 属性，则直接返回
         if (has(state.proxies, prop)) return state.proxies[prop]
+
+        // 取 baseState 的 prop 属性
         const value = state.base[prop]
+        // 如果 value 不是 Proxy 对象且可代理，那么
+        // 1. 为 value 创建个代理
+        // 2. 将这个代理存入 state.proxies[prop] 中
         if (!isProxy(value) && isProxyable(value))
             return (state.proxies[prop] = createProxy(state, value))
+
+        // 否则直接返回该值（是 Proxy 对象的时候）
         return value
     }
 }
 
+// draft.prop = value 做的事情
 function set(state, prop, value) {
+    // draft.modified 满足未被修改
     if (!state.modified) {
+        // baseState 中有，且 baseState.prop === value
+        // 或者 draft.proxies.prop === value
+        // 表示已经存在了，无需修改
         if (
             (prop in state.base && is(state.base[prop], value)) ||
             (has(state.proxies, prop) && state.proxies[prop] === value)
         )
             return true
+        
         markChanged(state)
     }
     state.copy[prop] = value
@@ -122,12 +138,16 @@ function defineProperty() {
     )
 }
 
+// 赋值的时候
 function markChanged(state) {
     if (!state.modified) {
         state.modified = true
+        // 浅拷贝
         state.copy = shallowCopy(state.base)
         // copy the proxies over the base-copy
+        // 将已经有代理的属性替换原来的
         Object.assign(state.copy, state.proxies) // yup that works for arrays as well
+        // 如果有父节点，就递归执行相同的操作
         if (state.parent) markChanged(state.parent)
     }
 }
