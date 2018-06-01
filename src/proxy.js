@@ -85,7 +85,12 @@ function get(state, prop) {
         if (has(state.proxies, prop)) return state.proxies[prop]
 
         // 取 baseState 的 prop 属性
-        const value = state.base[prop]
+        let value = state.base[prop]
+
+        // 无限取值
+        // if (typeof value === 'undefined') {
+        //     value = {}
+        // }
         // 如果 value 不是 Proxy 对象且可代理，那么
         // 1. 为 value 创建个代理
         // 2. 将这个代理存入 state.proxies[prop] 中
@@ -191,10 +196,13 @@ export function produceProxy(baseState, producer) {
         // 执行 producer，this 和 参数都是代理
         const returnValue = producer.call(rootProxy, rootProxy)
         // and finalize the modified proxy
+        // 最后确定修改后的代理
         let result
         // check whether the draft was modified and/or a value was returned
+        // producer 执行后返回了值并且该值不是 rootProxy（即 draft）
         if (returnValue !== undefined && returnValue !== rootProxy) {
             // something was returned, and it wasn't the proxy itself
+            // 
             if (rootProxy[PROXY_STATE].modified)
                 throw new Error(RETURNED_AND_MODIFIED_ERROR)
 
