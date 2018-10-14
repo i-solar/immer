@@ -167,9 +167,13 @@ _Note: it might be tempting after using producers for a while, to just place `pr
 
 Deep updates in the state of React components can be greatly simplified as well by using immer. Take for example the following onClick handlers (Try in [codesandbox](https://codesandbox.io/s/m4yp57632j)):
 
+通过使用 immer，可以大大简化 React 组件状态的深度更新。 以下面的 onClick 处理程序为例(在 [codesandbox](https://codesandbox.io/s/m4yp57632j) 中尝试)：
+
 ```javascript
 /**
  * Classic React.setState with a deep merge
+ * 
+ * 传统的 React.setState 的深度合并
  */
 onBirthDayClick1 = () => {
     this.setState(prevState => ({
@@ -254,9 +258,13 @@ const byId = produce(
 
 Immer automatically freezes any state trees that are modified using `produce`. This protects against accidental modifications of the state tree outside of a producer. This comes with a performance impact, so it is recommended to disable this option in production. It is by default enabled. By default it is turned on during local development, and turned off in production. Use `setAutoFreeze(true / false)` to explicitly turn this feature on or off.
 
+Immer 自动冻结使用 `produce` 修改的任何状态树。 这可以防止在 `produce` 之外对状态树的意外修改。 这会带来性能影响，因此建议在生产中禁用此选项。 它默认启用。 默认情况下，它在本地开发期间打开，并在生产中关闭。 使用 `setAutoFreeze（true / false）` 来显式打开或关闭此功能。
+
 ## Returning data from producers
 
 It is not needed to return anything from a producer, as Immer will return the (finalized) version of the `draft` anyway. However, it is allowed to just `return draft`.
+
+`producer` 不需要返回任何内容，因为 Immer 将默认返回 `draft` 的（最终版）版本。虽然，它也只会 `return draft`。
 
 It is also allowed to return arbitrarily other data from the producer function. But _only_ if you didn't modify the draft. This can be useful to produce an entirely new state. Some examples:
 
