@@ -50,8 +50,8 @@ each(objectTraps, (key, fn) => {
 
 /**
  * 创建一个 state
- * @param parent 
- * @param base 
+ * @param parent
+ * @param base
  */
 function createState(parent, base) {
     return {
@@ -80,17 +80,12 @@ function get(state, prop) {
             return (state.copy[prop] = createProxy(state, value))
         return value
     } else {
-        // ____未被修改过 ？
         // 如果 proxies 有 prop 属性，则直接返回
         if (has(state.proxies, prop)) return state.proxies[prop]
 
         // 取 baseState 的 prop 属性
         let value = state.base[prop]
 
-        // 无限取值
-        // if (typeof value === 'undefined') {
-        //     value = {}
-        // }
         // 如果 value 不是 Proxy 对象且可代理，那么
         // 1. 为 value 创建个代理
         // 2. 将这个代理存入 state.proxies[prop] 中
@@ -114,7 +109,7 @@ function set(state, prop, value) {
             (has(state.proxies, prop) && state.proxies[prop] === value)
         )
             return true
-        
+
         markChanged(state)
     }
     state.copy[prop] = value
@@ -130,7 +125,9 @@ function deleteProperty(state, prop) {
 function getOwnPropertyDescriptor(state, prop) {
     const owner = state.modified
         ? state.copy
-        : has(state.proxies, prop) ? state.proxies : state.base
+        : has(state.proxies, prop)
+            ? state.proxies
+            : state.base
     const descriptor = Reflect.getOwnPropertyDescriptor(owner, prop)
     if (descriptor && !(Array.isArray(owner) && prop === "length"))
         descriptor.configurable = true
@@ -168,7 +165,7 @@ function createProxy(parentState, base) {
     const proxy = Array.isArray(base)
         ? Proxy.revocable([state], arrayTraps)
         : Proxy.revocable(state, objectTraps)
-    // 
+    //
     proxies.push(proxy)
     // 返回代理
     return proxy.proxy
@@ -202,7 +199,7 @@ export function produceProxy(baseState, producer) {
         // producer 执行后返回了值并且该值不是 rootProxy（即 draft）
         if (returnValue !== undefined && returnValue !== rootProxy) {
             // something was returned, and it wasn't the proxy itself
-            // 
+            //
             if (rootProxy[PROXY_STATE].modified)
                 throw new Error(RETURNED_AND_MODIFIED_ERROR)
 

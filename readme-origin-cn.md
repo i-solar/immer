@@ -108,7 +108,7 @@ Read further to see all these benefits explained.
 * 开箱即用的结构共享
 * 开箱即用的对象冻结
 * 深层次更新是轻而易举的事
-* 
+* 样板代码（看起来重复的代码）减少。更少的干扰，更简洁的代码。
 * 小巧：打包压缩后：2KB
 
 ## Reducer Example
@@ -332,7 +332,11 @@ The Immer package ships with type definitions inside the package, which should b
 
 By default `produce` tries to use proxies for optimal performance. However, on older JavaScript engines `Proxy` is not available. For example, when running Microsoft Internet Explorer or React Native on Android. In such cases Immer will fallback to an ES5 compatible implementation which works identical, but is a bit slower.
 
+默认情况下，`produce` 尝试使用 `proxies` 来获得最佳性能。 但是，在较旧的 JavaScript 引擎上，`Proxy` 不可用。 例如，Microsoft Internet Explorer 或 Android 上的 React Native。 在这种情况下，Immer 将回退到 ES5 兼容的实现，它的工作方式相同，但速度稍慢。
+
 ## Pitfalls
+
+陷阱
 
 1. Don't redefine draft like, `draft = myCoolNewState`. Instead, either modify the `draft` or return a new state. See [Returning data from producers](#returning-data-from-producers).
 1. Currently, Immer only supports plain objects and arrays. PRs are welcome for more language built-in types like `Map` and `Set`.
@@ -340,6 +344,13 @@ By default `produce` tries to use proxies for optimal performance. However, on o
 1. For example, working with `Date` objects is no problem, just make sure you never modify them (by using methods like `setYear` on an existing instance). Instead, always create fresh `Date` instances. Which is probably what you were unconsciously doing already.
 1. Since Immer uses proxies, reading huge amounts of data from state comes with an overhead (especially in the ES5 implementation). If this ever becomes an issue (measure before you optimize!), do the current state analysis before entering the producer function or read from the `currentState` rather than the `draftState`
 1. Some debuggers (at least Node 6 is known) have trouble debugging when Proxies are in play. Node 8 is known to work correctly.
+
+1. 不要像 `draft = myCoolNewState` 那样重新定义草稿。相反，要么修改 `draft`，要么返回一个新状态。请参阅[producer函数返回数据]（＃returns-data-from-producers）。
+1. 目前，Immer 仅支持普通对象和数组。欢迎 PR 支持更多内置类型，如`Map`和`Set`。
+1. Immer 只处理本机数组和普通对象（即对象原型是 `null` 或 `Object`）。任何其他类型的价值将被逐字处理！因此，如果您修改 `Map` 或 `Buffer`（或 draft 状态中的任何复杂对象），则更改将会生效。但是，无论是在新旧状态下！因此，在这种情况下，如果您希望保持您的状态真正不可变，请确保始终处理 fresh 的实例。
+1. 例如，使用 `Date` 对象是没有问题的，只要确保你永远不要修改它们（通过在现有实例上使用`setYear`这样的方法）。相反，始终创建新的 `Date` 实例。这可能是你无意识地做过的事情。
+1. 由于 Immer 使用代理，从状态读取大量数据会带来开销（特别是在ES5实现中）。如果这成为一个问题（优化之前的测量！），在进入 producer 函数之前进行当前状态分析，或者从 `currentState` 而不是`draftState` 读取
+1. 一些调试器（至少已知 Node 6）在代理运行时调试有问题。不过 Node 8 上正常工作。
 
 ## Cool things built with immer
 
@@ -351,7 +362,11 @@ By default `produce` tries to use proxies for optimal performance. However, on o
 
 ## How does Immer work?
 
+Immer 是如何运作的？
+
 Read the (second part of the) [introduction blog](https://medium.com/@mweststrate/introducing-immer-immutability-the-easy-way-9d73d8f71cb3).
+
+阅读这里的[翻译版本](./how-does-immer-work.md)
 
 ## Example patterns.
 

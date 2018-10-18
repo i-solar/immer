@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Immer</title>
+</head>
+<body>
+    <script src="https://unpkg.com/immer/dist/immer.umd.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.8.2/immutable.js"></script>
+    <script>
+        const produce = immer.default
+
+        const originState = {
+            name: 'erwin',
+            others: {
+                age: -Infinity
+            }
+        }
+        const producer = draft => {
+            var name = draft.name
+            var others = draft.others
+            draft.name = 'erwinliu'
+            draft.others.age = 18
+        }
+        const finalState = produce(originState, producer)
+        console.log(finalState)
+    </script>
+</body>
+</html>

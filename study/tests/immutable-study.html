@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Immutable</title>
+</head>
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.8.2/immutable.js"></script>    
+    <script>
+        // 可以和 immer-study 做对比
+        const _Map = Immutable.Map
+        const proto = { name: 'earth' }
+        const originState = _Map(Object.create(proto))
+
+        const name = originState.get('name')
+        // const age = originState.getIn(['others', 'age'])
+        const finalState = originState.set('name', 'erwinliu')
+                                    //   .setIn(['others', 'age'], 18)
+        console.log(finalState.toJS())
+    </script>
+</body>
+</html>
