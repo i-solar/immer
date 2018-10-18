@@ -71,8 +71,8 @@ export default function produce(baseState, producer) {
 
     // 正文开始
     return getUseProxies()
-        // 支持 Proxy 的浏览器走这里
-        ? produceProxy(baseState, producer)
-        // 不支持 Proxy 的浏览器走这里
-        : produceEs5(baseState, producer)
+        ? // 支持 Proxy 的浏览器走这里
+          produceProxy(baseState, producer)
+        : // 不支持 Proxy 的浏览器走这里
+          produceEs5(baseState, producer)
 }
